@@ -15,7 +15,9 @@ var tutorials = tutorials || {};
     };
     
     /*
-     * Defaults for the "simpleComponent" component
+     * Defaults for the "simpleComponent" component options
+     * All these will be stored in an object called "options"
+     * in the final component
      */
     fluid.defaults("tutorials.simpleComponent", {
         gradeNames: ["fluid.littleComponent"],
@@ -76,6 +78,8 @@ var tutorials = tutorials || {};
     tutorials.currencyConverter = function (options) {
         var that = fluid.initLittleComponent("tutorials.currencyConverter", options);
 
+        // note that these methods have access to the values stored in 'options'
+        // - the ones provided in the defaults, and possibly overriden by implementors
         that.convert = function (amount) {
             return amount * that.options.exchangeRate;
         }
@@ -93,7 +97,9 @@ var tutorials = tutorials || {};
     /***************************************************************************
      * If you autoInit your component, you can take advantage of
      * the "finalInit" hook to add your public method.
-     * This hook is the last thing that happens before the final
+     * The autoInit lifecycle exposes points where you can modify the component.
+     * == need to link to the lifecycle docs
+     * The 'finalInit' hook is the last thing that happens before the final
      * component is returned to the user.
      */
     fluid.defaults("tutorials.currencyConverterAuto", {
@@ -125,6 +131,8 @@ var tutorials = tutorials || {};
      * Model components automatically get a "change applier"
      * which should be used for any modification to or queries
      * of your model.
+     * == need to link to a changeapplier tutorial
+     * Note that *all* component grades provide options merging by default.
      */
     fluid.defaults("tutorials.modelBearingComponent", {
         gradeNames: ["fluid.modelComponent", "autoInit"],
@@ -153,5 +161,100 @@ var tutorials = tutorials || {};
         // correctly set to "the date at runtime"
         that.model.date = "today's date"; // should be 'new Date()', but we use something testable for this tutorial
     };
+
+    /*
+     * You can, of course, use the final init function to add any public methods, etc.
+     */
+
+    /***************************************************************************
+     * Your component probably works in an environment where other things are
+     * operating, and probably needs to notify those other things of key events,
+     * activities, etc. The Infusion Framework includes an events system, and
+     * the easiest way to use it is to create an 'evented' component.
+     * Note that this can be combined with a model component, if desired.
+     * == need a link to events and event types
+     */
+    fluid.defaults("tutorials.componentWithEvents", {
+        // because the gradeNames includes both eventedComponent and modelComponent,
+        // the component will support both a model and events
+        // if a model is not used, you can leave out modelComponent
+        gradeNames: ["fluid.eventedComponent", "fluid.modelComponent", "autoInit"],
+        model: {},
+        events: {
+            afterSave: null,
+            onRemove: "preventable",
+            afterRemove: null
+        },
+        finalInitFunction: "tutorials.componentWithEvents.finalInit"
+    });
     
+    /*
+     * Add public methods that will fire events when they do things
+     */
+    tutorials.componentWithEvents.finalInit = function (that) {
+        that.save = function () {
+            // save stuff, then
+            // let anyone listening know the save has happened:
+            that.events.afterSave.fire();
+        };
+        
+        that.remove = function () {
+            // see if anyone listening objects to the removal:
+            var prevent = that.events.onRemove.fire();
+            if (prevent === false) {
+                // a listener prevented the move,
+                // don't do it
+            }
+            else {
+                // no one objects, go ahead and remove
+                that.events.afterRemove.fire();
+            }
+        };
+    };
+    
+    /*
+     * Need to talk about adding your own listeners as well.
+     */
+
+    /***************************************************************************
+     * You might be creating a component that will actually want to do something
+     * visual on your HTML page. little, model and evented components don't
+     * provide any support for this: you'll need a viewComponent.
+     * A view component assumes you have a list of dom elements you're interested in
+     * and will provide very easy access to them through the DOM Binder
+     * == need a link to DOM Binder docs
+     * == need to explain why selector names are in defaults and not hard-coded
+     * Note: view components automatically also provide support for model and events,
+     * so you don't need to include those in your gradeNames
+     */
+    fluid.defaults("tutorials.componentWithAView", {
+        gradeNames: ["fluid.viewComponent", "autoInit"],
+        model: {},
+        events: {},
+        selectors: {
+            heading: ".tut-cwav-heading",
+            body: ".tut-cwav-body",
+            footer: ".tut-cwav-footer"
+        },
+        finalInitFunction: "tutorials.componentWithAView.finalInit"
+    });
+    tutorials.componentWithAView.finalInit = function (that) {
+        // Your component will likely use something more complicated than just
+        // insert raw strings: you might show or hide things, add or remove
+        // styles, etc.
+        that.locate("heading").text("New Heading Text");
+        that.locate("body").text("New Body Text");
+        that.locate("footer").text("New Footer Text");
+    };
+    
+    /*
+     * What else does a view component offer? what should you do with a view
+     * component (e.g. write that.refreshView()?)
+     */
+
+    /***************************************************************************
+     * If your view needs are more complicated, you might need a rendererComponent.
+     * See that tutorial...
+     */
+
 }) (jQuery, fluid_1_4);

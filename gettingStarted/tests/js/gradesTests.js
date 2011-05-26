@@ -1,9 +1,9 @@
 
 (function ($) {
     $(document).ready(function () {
-        var gettingStartedTests = new jqUnit.TestCase("Getting Started Tutorial Tests");
+        var gradesTests = new jqUnit.TestCase("Grades Tutorial Tests");
 
-        gettingStartedTests.test("simple littleComponent", function () {
+        gradesTests.test("simple littleComponent", function () {
             // create a component
             var test1 = tutorials.simpleComponent();
             var componentDefaults = {
@@ -43,7 +43,7 @@
 
         });
 
-        gettingStartedTests.test("auto-initted littleComponent", function () {
+        gradesTests.test("auto-initted littleComponent", function () {
             // create a component
             var test1 = tutorials.simpleAutoComponent();
             var componentDefaults = {
@@ -83,7 +83,7 @@
 
         });
 
-        gettingStartedTests.test("littleComponent with method", function () {
+        gradesTests.test("littleComponent with method", function () {
             var test1 = tutorials.currencyConverter();
             jqUnit.assertEquals("", 1.035, test1.convert(1));
 
@@ -91,7 +91,7 @@
             jqUnit.assertEquals("", 0.97, test2.convert(1));
         });
 
-        gettingStartedTests.test("littleComponent with method, autoInitted", function () {
+        gradesTests.test("littleComponent with method, autoInitted", function () {
             var test1 = tutorials.currencyConverter();
             jqUnit.assertEquals("", 1.035, test1.convert(1));
 
@@ -99,7 +99,7 @@
             jqUnit.assertEquals("", 0.97, test2.convert(1));
         });
 
-        gettingStartedTests.test("model-bearing component, autoInitted", function () {
+        gradesTests.test("model-bearing component, autoInitted", function () {
             var test1 = tutorials.modelBearingComponent();
             jqUnit.assertTrue("Comoponent has a change applier", test1.applier);
 
@@ -129,12 +129,48 @@
             test2.applier.requestChange("val1", "FOG"); // will trigger modelChanged
         });
 
-        gettingStartedTests.test("model-bearing component, with pre-init", function () {
+        gradesTests.test("model-bearing component, with pre-init", function () {
             var test1 = tutorials.datedComponent();
             jqUnit.assertEquals("Date added to model", "today's date", test1.model.date);
 
             var test2 = tutorials.datedComponent({model: {date: "yesterday's date"}});
             jqUnit.assertEquals("Correct date overrides model", "today's date", test2.model.date);
+        });
+        
+        gradesTests.test("evented component, with pre-init", function () {
+            expect(2);
+            var saveListener = function () {
+                jqUnit.assertTrue("afterSave should fire", true);
+            };
+            var removePreventer = function () {
+                jqUnit.assertTrue("onRemove should fire", true);
+                // returning false will prevent the action
+                return false;
+            };
+            var removeListener = function () {
+                // this test will fail if executed - it should not happen
+                jqUnit.assertTrue("afterRemove should NOT fire", false);
+            };
+            var opts = {
+                listeners: {
+                    afterSave: saveListener,
+                    onRemove: removePreventer,
+                    afterRemove: removeListener
+                }
+            };
+            var test1 = tutorials.componentWithEvents(opts);
+            test1.save();
+            test1.remove();
+        });
+        
+        gradesTests.test("view component, with pre-init", function () {
+            var test1 = tutorials.componentWithAView("#cwav");
+            jqUnit.assertEquals("Heading has been inserted", "New Heading Text", $(".tut-cwav-heading").text());
+            jqUnit.assertEquals("Body has been inserted", "New Body Text", $(".tut-cwav-body").text());
+            jqUnit.assertEquals("Footer has been inserted", "New Footer Text", $(".tut-cwav-footer").text());
+
+            test1.locate("body").text("Changed body text");
+            jqUnit.assertEquals("Body has been updated", "Changed body text", $(".tut-cwav-body").text());
         });
     });
 })(jQuery);
