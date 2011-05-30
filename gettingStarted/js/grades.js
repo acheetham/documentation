@@ -42,9 +42,20 @@ var tutorials = tutorials || {};
     });
 
     /***************************************************************************
+     * What do "options" mean in the real world? What kinds of things are options
+     * used for?
+     */
+    /*
+     * Add real-world example
+     */
+
+    /***************************************************************************
      * The same component, created using "autoInit"
      * No need to write a creator function: the framework will
      * create it for you.
+     */
+    /*
+     * convert this to use the real-world example
      */
     fluid.defaults("tutorials.simpleAutoComponent", {
         // the only difference is the addition of the "autoInit" grade
@@ -136,8 +147,15 @@ var tutorials = tutorials || {};
      */
     fluid.defaults("tutorials.modelBearingComponent", {
         gradeNames: ["fluid.modelComponent", "autoInit"],
-        model: {}
+        model: {} // flesh out a sample model a bit
     });
+    
+    /***************************************************************************
+     * What might you use a model for?
+     */
+    /*
+     * Add real-world example
+     */
     
     /***************************************************************************
      * Suppose you need to do something to your model before it
