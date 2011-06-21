@@ -52,11 +52,105 @@ var tutorials = tutorials || {};
      */
 
     /***************************************************************************
-     * What kind of scenario/design would require subcomponents?
+     * What kind of scenario/design would require subcomponents? Consider this
+     * example from CollectionSpace, an open source collections management
+     * application. [ref to project and source code]
+     * == picture of screen, highlighting related records lists in sidebar
+     * The sidebar shows lists of records that are related in some way to
+     * the record displayed in the main portion of the screen. The RelatedRecordsList
+     * component is used to display the lists of records.
+     * This component uses three subcomponents:
+     * - 'recordList'
+     * - 'relationManager'
+     * - 'togglableRelated'
      */
-    /*
-     * Add a real-world example
-     */
+
+    // What about the fact that these are not currently autoInit in CSpace?
+
+    fluid.defaults("cspace.relatedRecordsList", {
+        gradeNames: "fluid.rendererComponent",
+        components: {
+            recordList: {
+                type: "cspace.recordList",
+                options: {
+                    elPaths: {
+                        items: "items"
+                    },
+                    strings: {
+                        number: "Number",
+                        summary: "Summary",
+                        recordtype: "Type",
+                        nothingYet: "No related records yet"
+                    },
+                    showNumberOfItems: false
+                }
+            },
+            relationManager: {
+                type: "cspace.relationManager",
+                options: {
+                    primary: "{relatedRecordsList}.options.primary",
+                    related: "{relatedRecordsList}.options.related",
+                    applier: "{relatedRecordsList}.options.applier",
+                    model: "{relatedRecordsList}.model",
+                    relationsElPath: "{relatedRecordsList}.options.relationsElPath"
+                }
+            },
+            togglableRelated: {
+                type: "cspace.util.togglable",
+                options: {
+                    selectors: {
+                        header: "{relatedRecordsList}.options.selectors.header",
+                        togglable: "{relatedRecordsList}.options.selectors.togglable"
+                    }
+                }
+            }
+        }
+    });
+
+    fluid.defaults("cspace.recordList", {
+        gradeNames: "fluid.rendererComponent"
+    });
+
+    fluid.defaults("cspace.util.togglable", {
+        gradeNames: ["fluid.viewComponent"]
+    });
+
+    fluid.defaults("cspace.relationManager", {
+        gradeNames: "fluid.rendererComponent",
+        components: {
+            dataContext: {
+                type: "cspace.dataContext",
+                options: {
+                    recordType: "relationships"
+                }
+            },
+            searchToRelateDialog: {
+                type: "cspace.searchToRelateDialog",
+                options: {
+                    listeners: {
+                        addRelations: "{relationManager}.dataContext.addRelations",
+                        onCreateNewRecord: "{relationManager}.events.onCreateNewRecord.fire"
+                    },
+                    model: "{relationManager}.model",
+                    related: "{relationManager}.options.related",
+                    primary: "{relationManager}.options.primary"
+                }
+            },
+            showAddButton: {
+                type: "cspace.relationManager.permissionResolver",
+                options: {
+                    recordTypeManager: "{recordTypeManager}",
+                    resolver: "{permissionsResolver}",
+                    recordClass: "{relationManager}.options.related",
+                    recordClassPermission: "update",
+                    allOf: [{
+                        target: "{relationManager}.options.primary",
+                        permission: "update"
+                    }]
+                }
+            }
+        }
+    });
 
     /***************************************************************************
      * How can the subcomponents access information in the parent component,
@@ -109,6 +203,12 @@ var tutorials = tutorials || {};
             }
         }
     });
+
+    /***************************************************************************
+     * Subcomponents may also want to access information from their siblings, or
+     * from their p 
+     */
+
 
     /***************************************************************************
      * Fun things to do with subcomponent!
