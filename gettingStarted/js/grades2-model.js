@@ -1,5 +1,7 @@
+/*jslint white: true, funcinvoke: true, undef: true, newcap: true, nomen: true, regexp: true, bitwise: true, browser: true, forin: true, maxerr: 100, indent: 4 */
+/*global fluid, jQuery*/
 
-// register the namespace
+// define the namespace
 var tutorials = tutorials || {};
 
 (function ($, fluid) {
@@ -39,14 +41,6 @@ var tutorials = tutorials || {};
         finalInitFunction: "tutorials.currencyConverter.finalInit"
     });
     
-    tutorials.currencyConverter.finalInit = function (that) {
-        that.convert = function (amount) {
-            return amount * that.model.rates[that.model.currentSelection];
-        };
-        that.updateRate = function (currency, newRate) {
-            that.applier.requestChange("rates."+currency, newRate);
-        };
-    };
     
     /***************************************************************************
      * Suppose you need to do something to your model before it
@@ -57,23 +51,24 @@ var tutorials = tutorials || {};
      */
     fluid.defaults("tutorials.datedComponent", {
         gradeNames: ["fluid.modelComponent", "autoInit"],
-        model: {},
-        preInitFunction: "tutorials.datedComponent.preInitFunction"
+        model: {
+            date: null
+        },
+        preInitFunction: "tutorials.datedComponent.preInit"
     });
 
     /*
      * A pre-init function to ensure that the model is in the correct
      * state before proceeding with other component initialization
      */
-    tutorials.datedComponent.preInitFunction = function (that) {
+    tutorials.datedComponent.preInit = function (that) {
         // set the date in the model to ensure that it is
         // correctly set to "the date at runtime"
-        that.model.date = "today's date"; // should be 'new Date()', but we use something testable for this tutorial
+        that.applier.requestChange("date", "today's date"); // should be 'new Date()', but we use something testable for this tutorial
     };
 
     /*
      * You can, of course, use the final init function to add any public methods, etc.
      */
 
-
-})(jQuery, fluid_1_4);
+})(jQuery, fluid);

@@ -1,5 +1,7 @@
+/*jslint white: true, funcinvoke: true, undef: true, newcap: true, nomen: true, regexp: true, bitwise: true, browser: true, forin: true, maxerr: 100, indent: 4 */
+/*global fluid, jQuery*/
 
-// register the namespace
+// define the namespace
 var tutorials = tutorials || {};
 
 (function ($, fluid) {
@@ -44,7 +46,7 @@ var tutorials = tutorials || {};
         // - the ones provided in the defaults, and possibly overriden by implementors
         that.convert = function (amount) {
             return amount * that.options.exchangeRate;
-        }
+        };
 
         return that;
     };
@@ -103,7 +105,7 @@ var tutorials = tutorials || {};
     tutorials.currencyConverterAuto.finalInit = function (that) {
         that.convert = function (amount) {
             return amount * that.options.exchangeRate;
-        }
+        };
     };
     
 
@@ -115,4 +117,4 @@ var tutorials = tutorials || {};
      */
     
 
-}) (jQuery, fluid_1_4);
+})(jQuery, fluid);
