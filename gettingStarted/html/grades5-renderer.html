@@ -1,0 +1,29 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr" id="html">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Canadian Currency Converter</title>
+    
+    <script type="text/javascript" src="../shared/infusion/MyInfusion.js"></script>
+    <script type="text/javascript" src="../js/grades5-renderer.js"></script>
+</head>
+
+    <body>
+        <h1>Currency Converter</h1>
+
+        <p>Converts Canadian currency into other denominations.</p>
+
+        <div class="tut-currencyConverter">
+            Convert: <input class="tut-currencyConverter-amount" type="text" size="5" value="0"/> CAD to
+            <select class="tut-currencyConverter-currency-selecter"> </select>
+            <p>Result: <span class="tut-currencyConverter-result">0</span></p>
+        </div>
+
+
+        <script type="text/javascript">
+            $(document).ready(function () {
+                var converter = tutorials.currencyConverter(".tut-currencyConverter");
+            });
+        </script>
+    </body>
+</html>

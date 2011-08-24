@@ -13,7 +13,19 @@
 
         <p>Converts Canadian currency into other denominations.</p>
 
-       <div class="tut-currencyConverter">
+        <div class="tut-currencyConverter-traditional">
+            Convert: <input class="tut-currencyConverter-amount" type="text" size="5" value="0"/> CAD to
+            <select class="tut-currencyConverter-currency-selecter">
+                <option value="euro">Euro</option>
+                <option value="rupee">Rupee</option>
+                <option value="usd">USD</option>
+                <option value="yuan">Yuan</option>
+                <option value="yen">Yen</option>
+            </select>
+            <p>Result: <span class="tut-currencyConverter-result">0</span></p>
+        </div>
+
+        <div class="tut-currencyConverter">
             Convert: <input class="tut-currencyConverter-amount" type="text" size="5" value="0"/> CAD to
             <select class="tut-currencyConverter-currency-selecter">
                 <option value="euro">Euro</option>
@@ -28,6 +40,7 @@
 
         <script type="text/javascript">
             $(document).ready(function () {
+                var converterTraditional = tutorials.currencyConverterTraditional(".tut-currencyConverter-traditional");
                 var converter = tutorials.currencyConverter(".tut-currencyConverter");
             });
         </script>

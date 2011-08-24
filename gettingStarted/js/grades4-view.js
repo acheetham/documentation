@@ -44,6 +44,56 @@ var tutorials = tutorials || {};
     };
     
     /***************************************************************************
+     * Currency Converter with UI, but not a View Component
+     */
+
+    fluid.defaults("tutorials.currencyConverterTraditional", {
+        gradeNames: ["fluid.modelComponent", "fluid.eventedComponent", "autoInit"],
+        model: {
+            rates: {
+                euro: 0.712,
+                yen: 81.841,
+                yuan: 6.609,
+                usd: 1.02,
+                rupee: 45.789
+            },
+            currentSelection: "euro",
+            amount: 0
+        },
+        events: {
+            conversionUpdated: null
+        },
+        finalInitFunction: "tutorials.currencyConverterTraditional.finalInit"
+    });
+    
+    var bindEventHandersTraditional = function (that) {
+        $(".tut-currencyConverter-currency-selecter", $(".tut-currencyConverter-traditional")).change(function () {
+            that.applier.requestChange("currentSelection", $(".tut-currencyConverter-currency-selecter", $(".tut-currencyConverter-traditional")).val());
+        });
+
+        $(".tut-currencyConverter-amount", $(".tut-currencyConverter-traditional")).change(function () {
+            that.applier.requestChange("amount", $(".tut-currencyConverter-amount", $(".tut-currencyConverter-traditional")).val());
+        });
+
+        // When the model changes, update the resulting "converted" value
+        that.applier.modelChanged.addListener("*", function () {
+            that.convert(that.model.amount);
+        });
+    };
+
+    tutorials.currencyConverterTraditional.finalInit = function (that) {
+
+        // Add a method to the component object
+        that.convert = function (amount) {
+            var convertedAmount = parseInt(amount) * that.model.rates[that.model.currentSelection];
+            $(".tut-currencyConverter-result", $(".tut-currencyConverter-traditional")).text(convertedAmount);
+            that.events.conversionUpdated.fire(convertedAmount);
+        };
+        
+        bindEventHandersTraditional(that);
+    };
+
+    /***************************************************************************
      * Currency Converter
      */
 
